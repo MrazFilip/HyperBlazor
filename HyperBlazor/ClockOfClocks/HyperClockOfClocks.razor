@@ -1,0 +1,104 @@
+﻿@using HyperBlazor.ClockOfClocks.Components
+@using HyperBlazor.ClockOfClocks.Models
+
+@if (_tokens != null)
+{
+    <div class="__hyper_clock_of_clocks_wrapper">
+        @foreach (var token in _tokens)
+        {
+            if (token.Type == ClockTokenType.Digit)
+            {
+                <div class="__hyper_clock_of_clocks_number">
+                    @for (int i = 0; i < 24; i++)
+                    {
+                        <HyperClock HourAngle="@Digits.digits[token.Value][i][0]"
+                                    MinuteAngle="@Digits.digits[token.Value][i][1]"
+                                    Config="Config" />
+                    }
+                </div>
+            }
+            else
+            {
+                <div
+                    class="__hyper_clock_separator"
+                    style="
+                    --hyper_clock_separator: @(Config.SeparatorColor is null ? Config.CommonHandSettings.Color : Config.SeparatorColor);
+                    ">
+                    @token.Value
+                </div>
+            }
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public HyperClockOfClocksConfiguration Config { get; set; } = new();
+
+    private List<ClockToken> _tokens = new();
+    private PeriodicTimer? _timer;
+    private CancellationTokenSource? _cts;
+
+    protected override void OnInitialized()
+    {
+        UpdateDisplay();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        _cts = new CancellationTokenSource();
+        _timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+        _ = Tick(_cts.Token);
+    }
+
+    private async Task Tick(CancellationToken token)
+    {
+        while (await _timer!.WaitForNextTickAsync(token))
+        {
+            UpdateDisplay();
+            StateHasChanged();
+        }
+    }
+
+    private void UpdateDisplay()
+    {
+        _tokens.Clear();
+
+        foreach (var ch in GetFormattedTime())
+        {
+            if (char.IsDigit(ch))
+            {
+                _tokens.Add(new ClockToken(ClockTokenType.Digit, ch));
+            }
+            else
+            {
+                _tokens.Add(new ClockToken(ClockTokenType.Separator, ch));
+            }
+        }
+    }
+
+    private string GetFormattedTime()
+    {
+        return Config.TimeZone == TimeZoneOptions.Local
+            ? DateTime.Now.ToLocalTime().ToString(Config.StringFormat)
+            : DateTime.UtcNow.ToString(Config.StringFormat);
+    }
+
+    public void Dispose()
+    {
+        _cts?.Cancel();
+        _timer?.Dispose();
+    }
+
+    public enum ClockTokenType
+    {
+        Digit,
+        Separator
+    }
+
+    public readonly record struct ClockToken(
+        ClockTokenType Type,
+        char Value
+    );
+}

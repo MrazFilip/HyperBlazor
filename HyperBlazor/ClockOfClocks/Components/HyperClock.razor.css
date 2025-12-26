@@ -1,0 +1,37 @@
+﻿.__hyper_clock {
+    width: 100%;
+    height: auto;
+    position: relative;
+    aspect-ratio: 1/1;
+    border-color: var(--hyper_clock_face_border-color);
+    border-width: var(--hyper_clock_face_border-width);
+    border-style: var(--hyper_clock_face_border-style);
+    border-radius: var(--hyper_clock_face_border-radius);
+    background-color: var(--hyper_clock_face_background-color);
+}
+
+.__hyper_clock_hand {
+    all: unset;
+    position: absolute;
+    background-color: var(--hyper_clock_hand_background-color);
+    top: 50%;
+    left: 50%;
+    translate: 0 -50%;
+    width: round(var(--hyper_clock_hand_lenght), 1px);
+    height: round(var(--hyper_clock_hand_width), 1px);
+    transform-origin: center left;
+    transition: rotate var(--hyper_clock_hand_speed);
+}
+
+.__hyper_clock_dot {
+    z-index: 1;
+    width: round(var(--hyper_clock_dot_width), 1px);
+    height: auto;
+    aspect-ratio: 1/1;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    background-color: var(--hyper_clock_dot_background-color);
+    border-radius: var(--hyper_clock_dot_border-radius);
+}

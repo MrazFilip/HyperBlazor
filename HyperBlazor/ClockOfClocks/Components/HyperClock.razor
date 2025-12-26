@@ -1,0 +1,78 @@
+﻿@using HyperBlazor.ClockOfClocks.Models
+
+@*CLOCK COMPONENT*@
+<div
+    class="__hyper_clock"
+    style="
+    --hyper_clock_face_background-color: @Config.ClockFaceColor;
+    --hyper_clock_face_border-radius: @Config.ClockFaceBorderRadius;@(Config.ClockFaceBorder? @AddBorder() : string.Empty)
+    ">
+
+    @*HOUR HAND*@
+    <div
+        class="__hyper_clock_hand"
+        style="
+        rotate: @(HourAngle)deg;@(Config.HourHand is not null ? @AddHandStyles(Config.HourHand) : @AddHandStyles(Config.CommonHandSettings))
+        ">
+    </div>
+
+    @*MINUTE HAND*@
+    <div
+        class="__hyper_clock_hand"
+        style="
+        rotate: @(MinuteAngle)deg;@(Config.MinuteHand is not null ? @AddHandStyles(Config.MinuteHand) : @AddHandStyles(Config.CommonHandSettings))
+        ">
+    </div>
+
+    @*HOUR DOT*@
+    <div class="__hyper_clock_dot" style="@AddDotStyles()"></div>
+</div>
+
+@code {
+    [Parameter] public HyperClockOfClocksConfiguration Config { get; set; } = new();
+    [Parameter] public int HourAngle { get; set; }
+    [Parameter] public int MinuteAngle { get; set; }
+
+    private string AddBorder()
+    {
+        return $@"
+    --hyper_clock_face_border-color: {Config.ClockFaceBorderColor};
+    --hyper_clock_face_border-width: {Config.ClockFaceBorderWidth};
+    --hyper_clock_face_border-style: {Config.ClockFaceBorderStyle};";
+    }
+
+    private string AddHandStyles(ClockHandSettings handSettings)
+    {
+        return $@"
+    --hyper_clock_hand_background-color: {handSettings.Color};
+    --hyper_clock_hand_lenght: {handSettings.Lenght};
+    --hyper_clock_hand_width: {handSettings.Width};
+    --hyper_clock_hand_speed: {handSettings.Speed};";
+    }
+
+    private string AddDotStyles()
+    {
+        var code = string.Empty;
+        if (Config.ClockFaceDotColor is not null)
+            code += $"--hyper_clock_dot_background-color: {Config.ClockFaceDotColor};";
+        else if(Config.HourHand is not null)
+            code += $"--hyper_clock_dot_background-color: {Config.HourHand.Color};";
+        else if (Config.MinuteHand is not null)
+            code += $"--hyper_clock_dot_background-color: {Config.MinuteHand.Color};";
+        else
+            code += $"--hyper_clock_dot_background-color: {Config.CommonHandSettings.Color};";
+
+        if (Config.ClockFaceDotWidth is not null)
+            code += $"--hyper_clock_dot_width: {Config.ClockFaceDotWidth};";
+        else if (Config.HourHand is not null)
+            code += $"--hyper_clock_dot_width: {Config.HourHand.Width};";
+        else if (Config.MinuteHand is not null)
+            code += $"--hyper_clock_dot_width: {Config.MinuteHand.Width};";
+        else
+            code += $"--hyper_clock_dot_width: {Config.CommonHandSettings.Width};";
+
+        code += $"--hyper_clock_dot_border-radius: {Config.ClockFaceBorderRadius};";
+
+        return code;
+    }
+}

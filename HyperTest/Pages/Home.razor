@@ -1,0 +1,142 @@
+﻿@page "/"
+@using HyperBlazor.ClockOfClocks.Models
+
+<PageTitle>Clock of Clocks</PageTitle>
+
+<h1>Clock of Clocks</h1>
+
+<div style="padding: 1rem 0">
+    <select @onchange="UpdateSelection">
+        @for (int i = 0; i < configs.Count; i++)
+        {
+            <option value="@i">Scheme @(i+1)</option>
+        }
+    </select>
+</div>
+
+<div style="width: 100%; padding: 2rem; margin-bottom: 2rem; background-color: @(currentConfig.Item1 ? "#252525" : "transparent")">
+    <HyperClockOfClocks Config="currentConfig.Item2" />
+</div>
+
+<h2>Current Configuration:</h2>
+<pre style="font-size: 1.2rem">
+    @currentConfig.Item3
+</pre>
+
+@code {
+    List<(bool, HyperClockOfClocksConfiguration, string)> configs = new()
+    {
+        (false, new(), "Default settings"),
+        (true, new()
+        {
+            ClockFaceColor = "#222222",
+            ClockFaceBorderColor = "#636363",
+            CommonHandSettings = new()
+            {
+                Color = "#EFFD5F"
+            },
+            StringFormat = "g"
+        },
+@"ClockFaceColor = ""#222222"",
+ClockFaceBorderColor = ""#636363"",
+CommonHandSettings = new()
+{
+    Color = ""#EFFD5F""
+},
+StringFormat = ""g"""),
+        (false, new()
+        {
+            ClockFaceColor = "#f1fbff",
+            ClockFaceBorderColor = "#00090c",
+            ClockFaceBorderRadius = "12.5%",
+            HourHand = new()
+            {
+                Color = "#14d3fe",
+                Speed = "500ms"
+            },
+            MinuteHand = new()
+            {
+                Color = "#c56efe",
+                Lenght = "30%"
+            },
+            ClockFaceDotColor = "#fe3cfc"
+        },
+@"ClockFaceColor = ""#f1fbff"",
+ClockFaceBorderColor = ""#00090c"",
+ClockFaceBorderRadius = ""12.5%"",
+HourHand = new()
+{
+    Color = ""#14d3fe"",
+    Speed = ""500ms""
+},
+MinuteHand = new()
+{
+    Color = ""#c56efe"",
+    Lenght = ""30%""
+},
+ClockFaceDotColor = ""#fe3cfc"""),
+        (true, new()
+        {
+            ClockFaceColor = "#eaf0eb",
+            ClockFaceBorder = false,
+            ClockFaceBorderRadius = "0",
+            CommonHandSettings = new()
+            {
+                Color = "#00cc33",
+                Speed = "500ms",
+                Width = "50%"
+            },
+            StringFormat = "HH mm ss",
+            TimeZone = TimeZoneOptions.Utc
+        },
+@"ClockFaceColor = ""#eaf0eb"",
+ClockFaceBorder = false,
+ClockFaceBorderRadius = ""0"",
+CommonHandSettings = new()
+{
+    Color = ""#00cc33"",
+    Speed = ""500ms"",
+    Width = ""50%""
+},
+StringFormat = ""HH mm ss"",
+TimeZone = TimeZoneOptions.Utc"),
+        (true, new()
+        {
+            ClockFaceColor = "#0f0516",
+            ClockFaceBorderColor = "#f2e6f9",
+            ClockFaceBorderStyle = "dashed",
+            ClockFaceBorderWidth = "3px",
+            HourHand = new()
+            {
+                Color = "#e794d2"
+            },
+            MinuteHand = new()
+            {
+                Color = "#8f2053"
+            },
+            ClockFaceDotColor = "#45c5d6",
+            StringFormat = "d"
+        },
+@"ClockFaceColor = ""#0f0516"",
+ClockFaceBorderColor = ""#f2e6f9"",
+ClockFaceBorderStyle = ""dashed"",
+ClockFaceBorderWidth = ""3px"",
+HourHand = new()
+{
+    Color = ""#e794d2""
+},
+MinuteHand = new()
+{
+    Color = ""#8f2053""
+},
+ClockFaceDotColor = ""#45c5d6"",
+StringFormat = ""d""")
+    };
+
+    (bool, HyperClockOfClocksConfiguration, string) currentConfig = (false, new(), "Default settings");
+
+    void UpdateSelection(EventArgs e)
+    {
+        currentConfig = configs[int.Parse(((ChangeEventArgs)e).Value!.ToString()!)];
+    }
+}
